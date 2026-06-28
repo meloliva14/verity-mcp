@@ -138,5 +138,9 @@ def guard_action(action: str, context: str | None = None, policy: str | None = N
     return _post(SUITE, "/guardrail", {"action": action, "context": context, "policy": policy})
 
 
-if __name__ == "__main__":
+def main() -> None:
     mcp.run()
+
+
+if __name__ == "__main__":
+    main()
