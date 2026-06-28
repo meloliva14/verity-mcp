@@ -1,3 +1,5 @@
+mcp-name: io.github.meloliva14/verity-mcp
+
 # Verity MCP — the agent economy's "verify before you spend/send/trust" gate
 
 One [Model Context Protocol](https://modelcontextprotocol.io) server that exposes Verity's fail-closed trust checks as tools any MCP-capable agent can discover and call: `verify_fact`, `detect_injection`, `moderate_content`, `redact_pii`, `guard_action`. Backed by Verity's live HTTP+x402 services on Base mainnet. Verity holds **no private key**.
