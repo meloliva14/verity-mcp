@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.meloliva14/verity-mcp",
+  "description": "Independent, fail-closed 'verify before you spend/send/trust' gate for AI agents: fact-check (catch hallucinations), prompt-injection detection, content moderation, PII/secret detection, and a pre-action guardrail (allow/review/block). Keyless, pay-per-call via x402 (USDC on Base).",
+  "repository": {
+    "url": "https://github.com/meloliva14/verity-mcp",
+    "source": "github"
+  },
+  "version": "0.1.0",
+  "websiteUrl": "https://veritylayer.dev",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "verity-mcp",
+      "version": "0.1.0",
+      "transport": { "type": "stdio" },
+      "environmentVariables": [
+        { "name": "VERITY_SUITE_URL", "description": "Verity suite base URL", "isRequired": false, "default": "https://verity-suite.onrender.com" },
+        { "name": "VERITY_ENGINE_URL", "description": "Verity engine base URL", "isRequired": false, "default": "https://verity-bzw7.onrender.com" }
+      ]
+    }
+  ]
+}
