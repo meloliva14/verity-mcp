@@ -1,22 +1,26 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.meloliva14/verity-mcp",
-  "description": "Fail-closed verify-before-you-act trust gate for AI agents. Keyless, pay-per-call via x402.",
+  "description": "Fail-closed verify-before-you-act trust gate for AI agents. Tiered, disclosed, pay-per-call via x402 (USDC on Base): quick_verify $0.02, grounded_verify $0.25, pro_verify $0.35, free verify_receipt (validates Ed25519-signed verdict receipts), plus injection/moderation/PII/guardrail suite checks at $0.02. Keyless.",
   "repository": {
     "url": "https://github.com/meloliva14/verity-mcp",
     "source": "github"
   },
-  "version": "0.1.1",
+  "version": "0.3.0",
   "websiteUrl": "https://veritylayer.dev",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "verity-mcp",
-      "version": "0.1.1",
+      "version": "0.3.0",
       "transport": { "type": "stdio" },
       "environmentVariables": [
         { "name": "VERITY_SUITE_URL", "description": "Verity suite base URL", "isRequired": false, "default": "https://verity-suite.onrender.com" },
-        { "name": "VERITY_ENGINE_URL", "description": "Verity engine base URL", "isRequired": false, "default": "https://verity-bzw7.onrender.com" }
+        { "name": "VERITY_ENGINE_URL", "description": "Verity engine base URL", "isRequired": false, "default": "https://api.veritylayer.dev" },
+        { "name": "VERITY_PRICE_QUICK", "description": "Disclosed per-call price for quick_verify", "isRequired": false, "default": "$0.02" },
+        { "name": "VERITY_PRICE_GROUNDED", "description": "Disclosed per-call price for grounded_verify (Sonnet, web-grounded)", "isRequired": false, "default": "$0.25" },
+        { "name": "VERITY_PRICE_PRO", "description": "Disclosed per-call price for pro_verify (Opus, premium synthesis)", "isRequired": false, "default": "$0.35" },
+        { "name": "VERITY_PRICE_SUITE", "description": "Disclosed per-call price for the suite checks (detect_injection/moderate_content/redact_pii/guard_action, /quick tier)", "isRequired": false, "default": "$0.02" }
       ]
     }
   ]
