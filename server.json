@@ -1,7 +1,7 @@
 {
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
   "name": "io.github.meloliva14/verity-mcp",
-  "description": "Fail-closed verify-before-you-act trust gate for AI agents. Tiered, disclosed, pay-per-call via x402 (USDC on Base): quick_verify $0.02, grounded_verify $0.25, pro_verify $0.35, free verify_receipt (validates Ed25519-signed verdict receipts), plus injection/moderation/PII/guardrail suite checks at $0.02. Keyless.",
+  "description": "Fail-closed verify-before-you-act gate for AI agents. Signed receipts. Pay-per-call via x402.",
   "repository": {
     "url": "https://github.com/meloliva14/verity-mcp",
     "source": "github"
