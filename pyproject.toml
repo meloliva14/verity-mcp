@@ -12,7 +12,11 @@ dependencies = ["mcp>=1.2.0", "httpx"]
 [project.optional-dependencies]
 # Opt-in wallet mode: lets this server settle its own x402 micro-payments so the paid
 # tools actually return verdicts. Keyless remains the default and needs none of this.
-x402 = ["verity-guard[x402]>=0.2.0"]
+# FLOOR IS 0.2.2: 0.2.0's payer had NO spend cap (it would sign whatever a 402 named,
+# capped only by wallet balance) and 0.2.1 still allowed pip to resolve the x402 v1
+# protocol client, which cannot read our v2 challenge. Wallet mode hands this payer a
+# real key, so the floor is the first version that is both capped and v2-correct.
+x402 = ["verity-guard[x402]>=0.2.2"]
 
 [project.urls]
 Homepage = "https://veritylayer.dev"
