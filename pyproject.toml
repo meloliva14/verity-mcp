@@ -1,6 +1,6 @@
 [project]
 name = "verity-mcp"
-version = "0.3.0"
+version = "0.4.0"
 description = "Independent fail-closed 'verify before you act' trust gate for AI agents — MCP server. Tiered, disclosed, pay-per-call via x402 (USDC on Base): quick_verify $0.02, grounded_verify $0.25 (live web citations), pro_verify $0.35, free verify_receipt (checks Ed25519-signed verdict receipts), plus prompt-injection, moderation, PII, and pre-action guardrail checks at $0.02. Keyless."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -8,6 +8,11 @@ license = { text = "MIT" }
 authors = [{ name = "Verity Labs", email = "veritylayer@gmail.com" }]
 keywords = ["mcp", "model-context-protocol", "agent", "x402", "trust", "verification", "hallucination", "guardrail", "ai-safety", "prompt-injection"]
 dependencies = ["mcp>=1.2.0", "httpx"]
+
+[project.optional-dependencies]
+# Opt-in wallet mode: lets this server settle its own x402 micro-payments so the paid
+# tools actually return verdicts. Keyless remains the default and needs none of this.
+x402 = ["verity-guard[x402]>=0.2.0"]
 
 [project.urls]
 Homepage = "https://veritylayer.dev"

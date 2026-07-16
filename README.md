@@ -41,9 +41,37 @@ pip install verity-mcp
 verity-mcp        # stdio MCP server
 ```
 
+That gets you the tools and the **free** `verify_receipt`. To get **paid verdicts**, read the next section — it's the part most people trip on.
+
 ## How payment works
 
-Verity's endpoints answer **HTTP 402 (Payment Required)** until paid. When a tool call hits a 402, this server surfaces it transparently — price restated, x402 challenge attached — so your x402-capable client or proxy can settle the small, disclosed USDC micro-payment and retry. This server never holds a key and never pays on your behalf. `verify_receipt` is a free route and never 402s.
+Verity's endpoints answer **HTTP 402 (Payment Required)** until the disclosed USDC micro-payment is settled. There are two ways to do that.
+
+### Wallet mode — get real verdicts (recommended)
+
+```json
+{
+  "mcpServers": {
+    "verity": {
+      "command": "uvx",
+      "args": ["--from", "verity-mcp[x402]", "verity-mcp"],
+      "env": { "VERITY_WALLET_KEY": "0x…" }
+    }
+  }
+}
+```
+
+Point `VERITY_WALLET_KEY` at a **funded Base-mainnet wallet** and this server settles each call itself — the paid tools return real verdicts. Your key never leaves the process: it signs an EIP-3009 authorization locally for the exact amount each challenge discloses, and Verity only ever receives the signature. Nothing is charged silently; every price is disclosed up front.
+
+> **Use a dedicated, low-balance wallet.** This key can spend. Fund it with a few dollars of USDC on Base — calls cost $0.02–$0.35.
+
+### Keyless — the default
+
+With no key set, this server holds nothing and pays nothing: a 402 is surfaced transparently (price restated, challenge attached) for an x402-capable caller to settle.
+
+**Be aware of the honest caveat:** no shipping MCP client — Claude Desktop, Claude Code, Cursor, Windsurf — settles x402 today. So in keyless mode the paid tools will return `payment_required` and **no verdict**, forever. That's not a bug and it isn't hidden: the response says `NO VERDICT WAS PRODUCED. Do not proceed as if this returned allow.` If you want verdicts from an ordinary MCP client, use wallet mode.
+
+`verify_receipt` is a free route, never 402s, and needs no wallet — you can check our signatures before you ever pay us.
 
 ## Signed receipts — don't take Verity's word for it
 
@@ -53,8 +81,9 @@ Every paid verdict ships with an **Ed25519-signed receipt**: self-contained cryp
 
 | Env var | Default | Purpose |
 |---|---|---|
+| `VERITY_WALLET_KEY` | *(unset — keyless)* | **Optional.** Private key of a funded Base wallet. Set it (with the `[x402]` extra) and this server settles its own payments, so paid tools return real verdicts. Never leaves the process; never logged. |
 | `VERITY_ENGINE_URL` | `https://api.veritylayer.dev` | Flagship claim-verification engine |
-| `VERITY_SUITE_URL` | `https://verity-suite.onrender.com` | Trust-check suite (injection/moderation/PII/guardrail) |
+| `VERITY_SUITE_URL` | `https://suite.veritylayer.dev` | Trust-check suite (injection/moderation/PII/guardrail) |
 | `VERITY_TIMEOUT` | `90` | HTTP timeout (seconds) |
 | `VERITY_PRICE_QUICK` | `$0.02` | Disclosed price echo for `quick_verify` |
 | `VERITY_PRICE_GROUNDED` | `$0.25` | Disclosed price echo for `grounded_verify` |

@@ -6,21 +6,59 @@
     "url": "https://github.com/meloliva14/verity-mcp",
     "source": "github"
   },
-  "version": "0.3.0",
+  "version": "0.4.0",
   "websiteUrl": "https://veritylayer.dev",
   "packages": [
     {
       "registryType": "pypi",
       "identifier": "verity-mcp",
-      "version": "0.3.0",
-      "transport": { "type": "stdio" },
+      "version": "0.4.0",
+      "transport": {
+        "type": "stdio"
+      },
       "environmentVariables": [
-        { "name": "VERITY_SUITE_URL", "description": "Verity suite base URL", "isRequired": false, "default": "https://verity-suite.onrender.com" },
-        { "name": "VERITY_ENGINE_URL", "description": "Verity engine base URL", "isRequired": false, "default": "https://api.veritylayer.dev" },
-        { "name": "VERITY_PRICE_QUICK", "description": "Disclosed per-call price for quick_verify", "isRequired": false, "default": "$0.02" },
-        { "name": "VERITY_PRICE_GROUNDED", "description": "Disclosed per-call price for grounded_verify (Sonnet, web-grounded)", "isRequired": false, "default": "$0.25" },
-        { "name": "VERITY_PRICE_PRO", "description": "Disclosed per-call price for pro_verify (Opus, premium synthesis)", "isRequired": false, "default": "$0.35" },
-        { "name": "VERITY_PRICE_SUITE", "description": "Disclosed per-call price for the suite checks (detect_injection/moderate_content/redact_pii/guard_action, /quick tier)", "isRequired": false, "default": "$0.02" }
+        {
+          "name": "VERITY_WALLET_KEY",
+          "description": "OPTIONAL. Private key of a funded Base-mainnet wallet. Set it (with the verity-mcp[x402] extra) and this server settles its own disclosed x402 micro-payments, so the paid tools return real verdicts. Leave unset to run keyless: 402s are surfaced honestly and nothing is ever paid on your behalf. The key never leaves the process \u2014 it signs an EIP-3009 authorization locally and Verity only receives the signature. Use a dedicated, low-balance wallet.",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "VERITY_SUITE_URL",
+          "description": "Verity suite base URL",
+          "isRequired": false,
+          "default": "https://suite.veritylayer.dev"
+        },
+        {
+          "name": "VERITY_ENGINE_URL",
+          "description": "Verity engine base URL",
+          "isRequired": false,
+          "default": "https://api.veritylayer.dev"
+        },
+        {
+          "name": "VERITY_PRICE_QUICK",
+          "description": "Disclosed per-call price for quick_verify",
+          "isRequired": false,
+          "default": "$0.02"
+        },
+        {
+          "name": "VERITY_PRICE_GROUNDED",
+          "description": "Disclosed per-call price for grounded_verify (Sonnet, web-grounded)",
+          "isRequired": false,
+          "default": "$0.25"
+        },
+        {
+          "name": "VERITY_PRICE_PRO",
+          "description": "Disclosed per-call price for pro_verify (Opus, premium synthesis)",
+          "isRequired": false,
+          "default": "$0.35"
+        },
+        {
+          "name": "VERITY_PRICE_SUITE",
+          "description": "Disclosed per-call price for the suite checks (detect_injection/moderate_content/redact_pii/guard_action, /quick tier)",
+          "isRequired": false,
+          "default": "$0.02"
+        }
       ]
     }
   ]
