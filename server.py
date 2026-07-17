@@ -75,25 +75,45 @@ TIMEOUT = float(os.getenv("VERITY_TIMEOUT", "90"))
 # stays in this process — it signs an EIP-3009 authorization locally for the exact
 # disclosed amount; VerityLayer only ever receives the signature.
 WALLET_KEY = os.getenv("VERITY_WALLET_KEY", "").strip()
-_payer: Any = None          # lazily built httpx.AsyncClient that settles 402s
+_payers: dict[str, Any] = {}   # price -> httpx.AsyncClient capped at exactly that price
 _payer_error: str | None = None
 
 
-def _get_payer() -> Any:
-    """The x402-settling client, or None when running keyless (the default)."""
-    global _payer, _payer_error
+def _get_payer(price: str) -> Any:
+    """The x402-settling client for a call priced at ``price``, or None when keyless.
+
+    CAPPED AT THE DISCLOSED PRICE, not at a blanket ceiling. The payer's own default is
+    $1.00 — sane for a library that cannot know what a call costs before it makes one, but
+    this server always does: every tool states its price up front and echoes it back. A
+    blanket ceiling here would let a typo'd or hijacked endpoint (VERITY_ENGINE_URL and
+    VERITY_SUITE_URL are env-overridable) get $0.95 signed for a call the agent was told
+    cost $0.02 — inside the headroom, so nothing would refuse it.
+
+    Headroom you don't need is just blast radius. Cap = the disclosed number, so "you pay
+    exactly what we told you" is enforced rather than merely intended. One payer per distinct
+    price, built once: a payer derives an address from the key, so rebuilding per call would
+    redo that work on every check.
+
+    Trade-off, stated plainly: if a price ever rises server-side, an older client refuses to
+    pay until it's upgraded. That is the correct direction to fail — it refuses, it does not
+    overpay — and the refusal names the price it expected.
+    """
+    global _payer_error
     if not WALLET_KEY or _payer_error:
         return None
-    if _payer is None:
+    if price not in _payers:
         try:
             from verity_guard.payer import async_x402_payer
-            _payer = async_x402_payer(WALLET_KEY, timeout=TIMEOUT)
+            # `price` is a display string like "$0.02"; the payer parses the "$".
+            _payers[price] = async_x402_payer(WALLET_KEY, max_price_usdc=price, timeout=TIMEOUT)
         except ImportError:
             _payer_error = ("VERITY_WALLET_KEY is set but the payer is not installed. "
                             "Install it with: pip install 'verity-mcp[x402]'")
+            return None
         except Exception as e:  # bad key etc. — never echo the key itself
             _payer_error = f"could not build the x402 payer: {type(e).__name__}: {str(e)[:120]}"
-    return _payer
+            return None
+    return _payers[price]
 
 # Disclosed per-call prices (USDC on Base mainnet). Surfaced in every tool docstring
 # AND echoed in the response so an agent/operator always sees what a call costs.
@@ -155,7 +175,7 @@ async def _post(
     Free routes (price == PRICE_FREE) never 402; the block below is simply skipped.
     """
     url = f"{base}{path}"
-    payer = _get_payer()
+    payer = _get_payer(price)  # capped at exactly the price this tool disclosed
     try:
         if payer is not None:
             r = await payer.post(url, json=payload, headers=_headers(affiliate_id))
